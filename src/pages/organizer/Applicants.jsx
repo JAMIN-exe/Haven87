@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { CheckCircle2, XCircle } from "lucide-react";
 import OrganizerLayout from "../../components/layout/OrganizerLayout";
 import Badge from "../../components/ui/Badge";
-import { getOpportunityById, getOpportunityApplications, updateApplicationStatus } from "../../api/mockApi";
+import { getOpportunityById, getOpportunityApplications, updateApplicationStatus } from "../../api/api";
 
 export default function Applicants() {
   const { id } = useParams();

@@ -11,7 +11,7 @@ import {
   CheckCircle2,
   ShieldCheck,
 } from "lucide-react";
-import { register } from "../api/mockApi";
+import { register } from "../api/api";
 
 const BG_PHOTOS = [
   { src: "https://images.unsplash.com/photo-1591189863430-ab87e120f312?w=500&q=60", className: "-top-4 -left-4 rotate-[-2deg] md:-top-10 md:-left-10 md:rotate-[-3deg]" },
@@ -253,24 +253,26 @@ export default function SignUp() {
                   </>
                 )}
 
-                <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-text mb-1">
-                    {role === "organizer" ? "Primary Contact Name" : "Full Name"}
-                  </label>
-                  <div className="relative">
-                    <input
-                      id="fullName"
-                      name="fullName"
-                      type="text"
-                      required
-                      value={form.fullName}
-                      onChange={handleChange}
-                      placeholder={role === "organizer" ? "e.g. Babatunde Alabi" : "e.g. Amina Bello"}
-                      className="w-full px-4 py-2.5 bg-surface-alt text-text placeholder-text-muted/70 rounded-lg outline-none focus:bg-surface focus:ring-2 focus:ring-accent transition-all"
-                    />
-                    <User size={18} className="absolute right-3 top-3 text-text-muted" />
+                {role === "volunteer" && (
+                  <div>
+                    <label htmlFor="fullName" className="block text-sm font-medium text-text mb-1">
+                      Full Name
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="fullName"
+                        name="fullName"
+                        type="text"
+                        required
+                        value={form.fullName}
+                        onChange={handleChange}
+                        placeholder="e.g. Amina Bello"
+                        className="w-full px-4 py-2.5 bg-surface-alt text-text placeholder-text-muted/70 rounded-lg outline-none focus:bg-surface focus:ring-2 focus:ring-accent transition-all"
+                      />
+                      <User size={18} className="absolute right-3 top-3 text-text-muted" />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-text mb-1">

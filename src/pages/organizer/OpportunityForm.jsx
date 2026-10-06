@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import OrganizerLayout from "../../components/layout/OrganizerLayout";
 import { useAuth } from "../../context/useAuth";
 import Input from "../../components/ui/Input";
-import { createOpportunity, updateOpportunity, getOpportunityById } from "../../api/mockApi";
+import { createOpportunity, updateOpportunity, getOpportunityById } from "../../api/api";
 
 const EMPTY_FORM = {
   title: "",

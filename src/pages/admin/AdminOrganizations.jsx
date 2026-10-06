@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShieldCheck, LogOut } from "lucide-react";
+import { ShieldCheck, LogOut, XCircle } from "lucide-react";
 import { useAuth } from "../../context/useAuth";
-import { getOrganizers, updateCacVerification } from "../../api/mockApi";
+import { getOrganizers, verifyOrganizer, rejectOrganizer } from "../../api/api";
 
 export default function AdminOrganizations() {
   const { logout } = useAuth();
@@ -23,12 +23,21 @@ export default function AdminOrganizations() {
 
   const handleVerify = async (userId) => {
     setUpdatingId(userId);
-    const res = await updateCacVerification(userId, true);
+    const res = await verifyOrganizer(userId);
     setUpdatingId(null);
     if (res.success) {
       setOrganizers((prev) =>
         prev.map((o) => (o.id === userId ? { ...o, cacVerified: true } : o))
       );
+    }
+  };
+
+  const handleReject = async (userId) => {
+    setUpdatingId(userId);
+    const res = await rejectOrganizer(userId);
+    setUpdatingId(null);
+    if (res.success) {
+      setOrganizers((prev) => prev.filter((organizer) => organizer.id !== userId));
     }
   };
 
@@ -84,14 +93,24 @@ export default function AdminOrganizations() {
                 </span>
 
                 {!org.cacVerified && (
-                  <button
-                    onClick={() => handleVerify(org.id)}
-                    disabled={updatingId === org.id}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-accent hover:bg-accent-hover text-white text-sm font-medium transition-colors disabled:opacity-70"
-                  >
-                    <ShieldCheck size={16} />
-                    {updatingId === org.id ? "Verifying..." : "Verify"}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleVerify(org.id)}
+                      disabled={updatingId === org.id}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-accent hover:bg-accent-hover text-white text-sm font-medium transition-colors disabled:opacity-70"
+                    >
+                      <ShieldCheck size={16} />
+                      {updatingId === org.id ? "Working..." : "Verify"}
+                    </button>
+                    <button
+                      onClick={() => handleReject(org.id)}
+                      disabled={updatingId === org.id}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-danger/10 hover:bg-danger/20 text-danger text-sm font-medium transition-colors disabled:opacity-70"
+                    >
+                      <XCircle size={16} />
+                      Reject
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

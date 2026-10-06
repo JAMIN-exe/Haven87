@@ -9,7 +9,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useAuth } from "../../context/useAuth";
-import { getMyApplications, getOpportunityById } from "../../api/mockApi";
+import { getMyApplications, getOpportunityById } from "../../api/api";
 import { formatDateLong } from "../../utils/formatDate";
 import MyApplications from "./MyApplications";
 import MyParticipation from "./MyParticipation";

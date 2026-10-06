@@ -12,8 +12,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "../context/useAuth";
-import { getOpportunityById, getMyApplications, applyToOpportunity } from "../api/mockApi";
-import { mockUsers, mockOpportunities } from "../api/mockData";
+import { getOpportunityById, getOpportunities, getMyApplications, applyToOpportunity } from "../api/api";
 import OpportunityCard from "../components/opportunities/OpportunityCard";
 import { getOpportunityImage } from "../utils/opportunityImage";
 import { formatDate } from "../utils/formatDate";
@@ -29,12 +28,19 @@ export default function OpportunityDetail() {
   const [alreadyApplied, setAlreadyApplied] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [otherOpportunities, setOtherOpportunities] = useState([]);
 
   useEffect(() => {
     async function load() {
       setLoading(true);
-      const res = await getOpportunityById(id);
+      const [res, listRes] = await Promise.all([
+        getOpportunityById(id),
+        getOpportunities({ limit: 4 }),
+      ]);
       if (res.success) setOpportunity(res.data);
+      if (listRes.success) {
+        setOtherOpportunities(listRes.data.items.filter((item) => item.id !== id).slice(0, 3));
+      }
 
       if (user?.role === "volunteer") {
         const appsRes = await getMyApplications(user.id);
@@ -85,16 +91,16 @@ export default function OpportunityDetail() {
     );
   }
 
-  const organizer = mockUsers.find((u) => u.id === opportunity.organizerId);
-  const isLowSpots = opportunity.spotsAvailable <= 2;
-  const confirmedCount = (opportunity.totalSpots || 0) - opportunity.spotsAvailable;
-  const fillPercent = opportunity.totalSpots
+  const organizer = opportunity.organizer;
+  const registrationOpen = !opportunity.status || opportunity.status === "open";
+  const hasAvailabilityCount = opportunity.spotsAvailable != null;
+  const isLowSpots = hasAvailabilityCount && opportunity.spotsAvailable <= 2;
+  const confirmedCount = hasAvailabilityCount
+    ? Math.max(0, (opportunity.totalSpots || 0) - opportunity.spotsAvailable)
+    : null;
+  const fillPercent = opportunity.totalSpots && confirmedCount != null
     ? Math.min(100, Math.round((confirmedCount / opportunity.totalSpots) * 100))
     : 0;
-
-  const otherOpportunities = mockOpportunities
-    .filter((o) => o.id !== opportunity.id)
-    .slice(0, 3);
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
@@ -143,7 +149,9 @@ export default function OpportunityDetail() {
         <InfoItem
           icon={Users}
           label="Crew Capacity"
-          value={opportunity.totalSpots ? `${confirmedCount} / ${opportunity.totalSpots}` : `${opportunity.spotsAvailable} open`}
+          value={hasAvailabilityCount
+            ? `${confirmedCount} / ${opportunity.totalSpots}`
+            : `${opportunity.totalSpots} total spots`}
         />
       </div>
 
@@ -162,10 +170,12 @@ export default function OpportunityDetail() {
           <div className="bg-surface rounded-xl border border-border p-6">
             <h2 className="font-heading text-lg font-semibold text-text mb-3">About This Initiative</h2>
             <p className="text-text-muted leading-relaxed">{opportunity.description}</p>
-            <p className="text-text-muted leading-relaxed mt-3">
-              As a volunteer, you'll work alongside {organizer?.fullName} and other community
-              members on this initiative. {opportunity.tagline}.
-            </p>
+            {opportunity.tagline && (
+              <p className="text-text-muted leading-relaxed mt-3">
+                As a volunteer, you'll work alongside {organizer?.fullName} and other community
+                members on this initiative. {opportunity.tagline}.
+              </p>
+            )}
           </div>
         </div>
 
@@ -174,30 +184,36 @@ export default function OpportunityDetail() {
           <div className="bg-surface rounded-xl border border-border p-5 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-text uppercase tracking-wide">Shift Registration</h3>
-              <span className="text-xs font-medium text-success flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-success" />
-                Registration Open
+              <span className={`text-xs font-medium flex items-center gap-1 ${registrationOpen ? "text-success" : "text-danger"}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${registrationOpen ? "bg-success" : "bg-danger"}`} />
+                {registrationOpen ? "Registration Open" : "Registration Closed"}
               </span>
             </div>
 
             {opportunity.totalSpots && (
               <div className="mb-4">
                 <div className="flex items-center justify-between text-sm mb-1.5">
-                  <span className="text-text-muted">Crew Availability</span>
+                  <span className="text-text-muted">{hasAvailabilityCount ? "Crew Availability" : "Crew Capacity"}</span>
                   <span className={isLowSpots ? "text-warning font-medium" : "text-success font-medium"}>
-                    {opportunity.spotsAvailable} of {opportunity.totalSpots} spots remaining
+                    {hasAvailabilityCount
+                      ? `${opportunity.spotsAvailable} of ${opportunity.totalSpots} spots remaining`
+                      : `${opportunity.totalSpots} total spots`}
                   </span>
                 </div>
-                <div className="w-full h-2 bg-surface-alt rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-accent rounded-full transition-all"
-                    style={{ width: `${fillPercent}%` }}
-                  />
-                </div>
-                <div className="flex items-center justify-between text-xs text-text-muted mt-1">
-                  <span>{confirmedCount} Confirmed</span>
-                  <span>{opportunity.totalSpots} Max Capacity</span>
-                </div>
+                {hasAvailabilityCount && (
+                  <>
+                    <div className="w-full h-2 bg-surface-alt rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-accent rounded-full transition-all"
+                        style={{ width: `${fillPercent}%` }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-text-muted mt-1">
+                      <span>{confirmedCount} Confirmed</span>
+                      <span>{opportunity.totalSpots} Max Capacity</span>
+                    </div>
+                  </>
+                )}
               </div>
             )}
 
@@ -222,6 +238,8 @@ export default function OpportunityDetail() {
               </div>
             ) : user.role !== "volunteer" ? (
               <p className="text-sm text-text-muted">Only volunteer accounts can apply to opportunities.</p>
+            ) : !registrationOpen ? (
+              <p className="text-sm text-text-muted">Registration is closed for this opportunity.</p>
             ) : alreadyApplied ? (
               <div className="flex items-center gap-2 text-success text-sm font-medium">
                 <CheckCircle2 size={18} />

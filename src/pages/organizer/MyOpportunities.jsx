@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Pencil, Trash2, Users } from "lucide-react";
 import OrganizerLayout from "../../components/layout/OrganizerLayout";
 import { useAuth } from "../../context/useAuth";
-import { getOpportunities, deleteOpportunity } from "../../api/mockApi";
+import { getOpportunities, deleteOpportunity } from "../../api/api";
 
 export default function MyOpportunities() {
   const { user } = useAuth();
@@ -67,7 +67,9 @@ export default function MyOpportunities() {
                     </span>
                   </div>
                   <p className="text-sm text-text-muted">
-                    {opp.location} · {opp.spotsAvailable} {opp.spotsAvailable === 1 ? "spot" : "spots"} remaining
+                    {opp.location} · {opp.spotsAvailable == null
+                      ? `${opp.totalSpots} total spots`
+                      : `${opp.spotsAvailable} ${opp.spotsAvailable === 1 ? "spot" : "spots"} remaining`}
                   </p>
                 </div>
 

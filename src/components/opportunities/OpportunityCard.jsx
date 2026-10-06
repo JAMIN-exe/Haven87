@@ -14,7 +14,9 @@ export default function OpportunityCard({ opportunity }) {
           </span>
           <span className="text-xs font-medium flex items-center gap-1.5 text-text-muted">
             <Users size={14} />
-            {opportunity.spotsAvailable} {opportunity.spotsAvailable === 1 ? "spot" : "spots"} remaining
+            {opportunity.spotsAvailable == null
+              ? `${opportunity.totalSpots} total spots`
+              : `${opportunity.spotsAvailable} ${opportunity.spotsAvailable === 1 ? "spot" : "spots"} remaining`}
           </span>
         </div>
 

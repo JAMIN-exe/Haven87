@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, Send, CheckCircle, MapPin, Calendar, ArrowRight } from "lucide-react";
-import { getOpportunities } from "../api/mockApi";
+import { getOpportunities } from "../api/api";
 import Reveal from "../components/ui/Reveal";
 import { formatDate } from "../utils/formatDate";
 import { getOpportunityImage } from "../utils/opportunityImage";
@@ -208,7 +208,10 @@ function FeaturedCard({ opportunity }) {
 
         {organizer && (
           <p className="text-xs text-text-muted">
-            {opportunity.spotsAvailable} {opportunity.spotsAvailable === 1 ? "spot" : "spots"} remaining · {organizer.fullName}
+            {opportunity.spotsAvailable == null
+              ? `${opportunity.totalSpots} total spots`
+              : `${opportunity.spotsAvailable} ${opportunity.spotsAvailable === 1 ? "spot" : "spots"} remaining`}
+            {` · ${organizer.fullName}`}
           </p>
         )}
 

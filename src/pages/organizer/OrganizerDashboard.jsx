@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ClipboardList, Users, Clock } from "lucide-react";
 import OrganizerLayout from "../../components/layout/OrganizerLayout";
 import { useAuth } from "../../context/useAuth";
-import { getOpportunities, getOpportunityApplications } from "../../api/mockApi";
+import { getOpportunities, getOpportunityApplications } from "../../api/api";
 
 export default function OrganizerDashboard() {
   const { user } = useAuth();
@@ -75,7 +75,9 @@ export default function OrganizerDashboard() {
                   <div>
                     <p className="font-medium text-text">{opp.title}</p>
                     <p className="text-sm text-text-muted">
-                      {opp.location} · {opp.spotsAvailable} {opp.spotsAvailable === 1 ? "spot" : "spots"} remaining
+                      {opp.location} · {opp.spotsAvailable == null
+                        ? `${opp.totalSpots} total spots`
+                        : `${opp.spotsAvailable} ${opp.spotsAvailable === 1 ? "spot" : "spots"} remaining`}
                     </p>
                   </div>
                   <Link

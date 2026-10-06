@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import OpportunityCard from "../components/opportunities/OpportunityCard";
 import EmptyState from "../components/ui/EmptyState";
 import Input from "../components/ui/Input";
-import { getOpportunities } from "../api/mockApi";
+import { getOpportunities } from "../api/api";
 
 export default function Opportunities() {
   const [search, setSearch] = useState("");
