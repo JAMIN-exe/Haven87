@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #FBF8F5;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #FCEEE3;
+  --color-text: #231B16;
+  --color-text-muted: #6B5E54;
+  --color-accent: #E8672A;
+  --color-accent-hover: #C9541E;
+  --color-border: #EBE3DB;
+  --color-success: #3F7D5C;
+  --color-warning: #B8862E;
+  --color-danger: #B3402E;
+  --font-heading: "Fraunces", Georgia, serif;
+  --font-body: "Inter", "Segoe UI", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+@keyframes landing-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-reveal {
+  animation: landing-fade-up 650ms ease-out both;
+}
+
+.landing-scroll-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 650ms ease-out, transform 650ms ease-out;
+  will-change: opacity, transform;
+}
+
+.landing-scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.landing-reveal-delay-1 {
+  animation-delay: 100ms;
+  transition-delay: 100ms;
+}
+
+.landing-reveal-delay-2 {
+  animation-delay: 180ms;
+  transition-delay: 180ms;
+}
+
+.landing-reveal-delay-3 {
+  animation-delay: 260ms;
+  transition-delay: 260ms;
+}
+
+.landing-reveal-delay-4 {
+  animation-delay: 340ms;
+  transition-delay: 340ms;
+}
+
+@media (min-width: 768px) {
+  .landing-reveal {
+    animation-duration: 950ms;
+  }
+
+  .landing-scroll-reveal {
+    transform: translateY(24px) scale(0.98);
+    transition: opacity 950ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 950ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .landing-scroll-reveal.is-visible {
+    transform: translateY(0) scale(1);
+  }
+
+  .landing-reveal-delay-1 {
+    animation-delay: 140ms;
+    transition-delay: 140ms;
+  }
+
+  .landing-reveal-delay-2 {
+    animation-delay: 260ms;
+    transition-delay: 260ms;
+  }
+
+  .landing-reveal-delay-3 {
+    animation-delay: 380ms;
+    transition-delay: 380ms;
+  }
+
+  .landing-reveal-delay-4 {
+    animation-delay: 500ms;
+    transition-delay: 500ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-reveal {
+    animation: none;
+  }
+
+  .landing-scroll-reveal {
+    transform: none;
+    transition: opacity 300ms ease-out;
+  }
+
+  .landing-scroll-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
